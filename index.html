@@ -1,1 +1,75 @@
-Hello, World!
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+<title>EVEE-Tools</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<a class="navbar-brand" href="#"><h1>EVEE-Tools</h1></b></a>
+</nav>
+
+<br><br><br>
+
+<div class="container">
+<div class="jumbotron">
+<h4>
+EVEE-tools is a suite of scripts used in <a href="https://www.biorxiv.org/content/early/2017/12/04/229096" target="_blank">Chen et al., 2017</a> to analyze expression evolution across species. To begin, download all scripts and example data from the <a href="https://github.com/evee-tools/evee-tools" target="_blank">github repository</a>
+<br><br>
+You may find these scripts helpful for the following tasks:
+</h4>
+<br>
+
+<button class="accordion"><font size = "4">Generating an expression matrix file given RSEM outputs</font></button>
+<div class="panel">
+	<br>
+	<p>
+	<b><code>./makeExpressionMatrix.py</code></b>
+	<br><code>usage: makeExpressionMatrix.py [-h] [--gene_name GENE_NAME] ortholog_groups rsem_list out_prefix</code>
+	<br><br>This simple script generates a matrix files (gene x sample) of TPM values given a file of ortholog groups and a list of RSEM output files. 
+	<br><br>
+	<b>Input:</b>
+	<ul>
+		<li>List of ortholog groups. Each line should begin with a unique ortholog ID and be followed by the gene ID (e.g. Ensembl ID) from each species that belong in that ortholog group. Each gene ID should also be prefixed by a species ID. The gene ID should match the gene IDs in the RSEM output files.
+		<li>List of RSEM output files. Each line should list the species, species ID, and path to corresponding RSEM output files. Multiple output RSEM files belonging to the species can be listed.</li>
+		<li>(Optionally) Mapping from gene ID to gene name.</li>
+	</ul>
+	<br>
+	<b>Output:</b>
+	<ul>
+		<li>An expression matrix of TPM values per gene per sample.</li>
+		<li>An index file specifying which species belongs to each column of the matrix file.</li>
+	</ul>
+	<br><b>Example:</b>
+	<br><code>./makeExpressionMatrix.py --gene_name data/gene_name.txt data/mammals.ortholog_groups.txt data/liver.rsem.list liver</code>
+	</p>
+</div>
+
+<button class="accordion"><font size = "4">Calculating average expression divergence across species</font></button>
+<div class="panel">
+	<br>
+	<p>Lorem ipsum...</p>
+</div>
+
+<button class="accordion"><font size = "4">Finding the evolutionary mean and variance of each gene</font></button>
+<div class="panel">
+	<br>
+	<p>Lorem ipsum...</p>
+</div>
+
+<button class="accordion"><font size = "4">Identifying 'differential expression' across a tree</font></button>
+<div class="panel">
+	<br>
+	<p>Lorem ipsum...</p>
+</div>
+
+
+<script src = "scripts.js"></script>
+</div>
+</div>
+</body>
+</html>
+
