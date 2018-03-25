@@ -9,7 +9,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-<a class="navbar-brand" href="#"><h1>EVEE-Tools</h1></b></a>
+<a class="navbar-brand" href="#"><h1 style="line-height: 20px; padding: 20px 0">EVEE-Tools</h1></b></a>
 </nav>
 
 <br><br><br>
@@ -17,10 +17,13 @@
 <div class="container">
 <div class="jumbotron">
 <h4>
-EVEE-tools is a suite of scripts used in <a href="https://www.biorxiv.org/content/early/2017/12/04/229096" target="_blank">Chen et al., 2017</a> to analyze expression evolution across species. To begin, download all scripts and example data from the <a href="https://github.com/evee-tools/evee-tools" target="_blank">github repository</a>
+EVEE-tools is a suite of scripts used in <a href="https://www.biorxiv.org/content/early/2017/12/04/229096" target="_blank">Chen et al., 2017</a> to analyze expression evolution across species. 
+<h4>
+<h5>
+<br>To begin, download all scripts and example data from the <a href="https://github.com/evee-tools/evee-tools" target="_blank">github repository</a>.
 <br><br>
-You may find these scripts helpful for the following tasks:
-</h4>
+These scripts may be helpful for the following tasks:
+</h5>
 <br>
 
 <button class="accordion"><font size = "4">Generating an expression matrix file given RSEM outputs</font></button>
@@ -28,13 +31,19 @@ You may find these scripts helpful for the following tasks:
 	<br>
 	<p>
 	<b><code>./makeExpressionMatrix.py</code></b>
-	<br><code>usage: makeExpressionMatrix.py [-h] [--gene_name GENE_NAME] ortholog_groups rsem_list out_prefix</code>
+	<br><code>usage: ./makeExpressionMatrix.py [-h] [--gene_name GENE_NAME] ortholog_groups rsem_list out_prefix</code>
 	<br><br>This simple script generates a matrix files (gene x sample) of TPM values given a file of ortholog groups and a list of RSEM output files. 
 	<br><br>
+	<ul></ul>	
+	<b>Dependencies:</b>
+	<ul>
+		<li>Python (code was developed in v2.7, will not work with Python3)</li>
+	</ul>
+	<br>
 	<b>Input:</b>
 	<ul>
-		<li>List of ortholog groups. Each line should begin with a unique ortholog ID and be followed by the gene ID (e.g. Ensembl ID) from each species that belong in that ortholog group. Each gene ID should also be prefixed by a species ID. The gene ID should match the gene IDs in the RSEM output files.
-		<li>List of RSEM output files. Each line should list the species, species ID, and path to corresponding RSEM output files. Multiple output RSEM files belonging to the species can be listed.</li>
+		<li>List of ortholog groups. Each line should begin with a unique ortholog ID and be followed by the gene ID (e.g. Ensembl ID) from each species that belong in that ortholog group. Each gene ID should also be prefixed by a species ID, separated by a '|' (e.g. HUMAN|ENSG00000068097). The gene ID should match the gene IDs in the RSEM output files.
+		<li>List of RSEM output files. Each line should list the species, species ID, and path to corresponding RSEM output files. The reason for specifying both species and species ID is that multiple different species may rely on the same set of annotations (e.g. Mus musculus and Mus caroli data both rely on Ensembl mouse annotations.)</li>
 		<li>(Optionally) Mapping from gene ID to gene name.</li>
 	</ul>
 	<br>
@@ -48,23 +57,74 @@ You may find these scripts helpful for the following tasks:
 	</p>
 </div>
 
-<button class="accordion"><font size = "4">Calculating average expression divergence across species</font></button>
+<button class="accordion"><font size = "4">Calculating expression divergence across species</font></button>
 <div class="panel">
 	<br>
-	<p>Lorem ipsum...</p>
+	<p>
+	<code>
+	<b>./residuals.R</b>
+	<br>usage: Rscript ./residuals.R exp_matrix index reference out
+	</code>
+	<br><br>This script calculates the expression difference from every species to a references species. You may want to plot the average expression difference across all genes against evolutionary time (e.g. branch length) to discover the pattern of expression divergence in your set of species.
+	<br><br>
+	<ul></ul>
+	<b>Dependencies:</b>
+	<ul>
+	<li>R (code was developed in v3.2.1)</li>
+	</ul>
+	<br>
+	<b>Input:</b>
+	<ul>
+		<li>Expression matrix and index file from <code>./makeExpressionMatrix.py</code> (see <b>Generating an expression matrix...</b>).</li>
+		<li>Reference species. Must match one of the species listed in the first column of the index file.</li>
+	</ul>
+	<br>
+	<b>Output:</b>
+	<ul>
+		<li>File of expression differences from reference species ("residuals") of each gene in each sample.</li>
+	</ul>
+	<br><b>Example:</b>
+	<br><code>Rscript ./residuals.R data/liver.exp_matrix.txt data/liver.index.txt human liver.residuals.txt</code>
+	</p>
 </div>
 
 <button class="accordion"><font size = "4">Finding the evolutionary mean and variance of each gene</font></button>
 <div class="panel">
 	<br>
-	<p>Lorem ipsum...</p>
+	<p>
+	<code>
+	<b>./fitOUModel.R</b>
+	<br>usage: Rscript ./fitOUModel.R exp_matrix index tree out</code>
+	<br><br>This scripts fits a Brownian motion and Ornstein-Uhlenbeck (OU) model to each gene.
+	<br><br>
+	<ul></ul>
+	<b>Dependencies:</b>
+	<ul>
+	<li>R (code was developed in v3.2.1)</li>
+	<li><a href="http://bioconductor.org/packages/release/bioc/html/edgeR.html" target="_blank"><em>edgeR</em></a></li>
+	<li><a href="https://cran.r-project.org/web/packages/ouch/index.html" target="_blank"><em>ouch</em></a></li>
+	</ul>
+	<br>
+	<b>Input:</b>
+	<ul>
+		<li>Expression matrix and index file from <code>./makeExpressionMatrix.py</code> (see <b>Generating an expression matrix...</b>).</li>
+		<li>Tree file for ouch. (See <a href="https://cran.r-project.org/web/packages/ouch/ouch.pdf" target="_blank"><em>ouch</em></a>'s reference manual</a>.)
+	</ul>
+	<br>
+	<b>Output:</b>
+	<ul>
+		<li>Significance of OU fit ("qvalues"), evolutionary mean ("thetas") and variance ("var") under OU model, and rate of divergence under Brownian motion model ("brownSigmas") for each gene.</li>
+	</ul>
+	<br><b>Example:</b>
+	<br><code>Rscript fitOUModel.R data/liver.exp_matrix.txt data/liver.index.txt data/mammals.tree.txt liver.ou_stats.txt</code>
+	</p>
 </div>
-
 <button class="accordion"><font size = "4">Identifying 'differential expression' across a tree</font></button>
 <div class="panel">
 	<br>
 	<p>Lorem ipsum...</p>
 </div>
+
 
 
 <script src = "scripts.js"></script>
