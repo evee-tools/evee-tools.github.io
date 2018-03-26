@@ -9,7 +9,15 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-<a class="navbar-brand" href="#"><h1 style="line-height: 20px; padding: 20px 0">EVEE-Tools</h1></b></a>
+<ul class = "nav navbar-nav mr-auto" style="display:table-row;">
+<li class = "nav-item" style="display: table-cell; vertical-align: text-bottom;"><a class="navbar-brand" href="#"><h1><img src="33909438.png" style="display:inline-bloack; vertical-align: text-top;" width=60>&nbsp;EVEE-Tools</h1></b></a></li>
+<li class = "nav-item" style="display: table-cell; vertical-align: text-bottom;"><a class="nav-link" href="https://portals.broadinstitute.org/evee/" target="_blank"><h5>EVEE Gene Browser&nbsp;<img src="white-external-link-16.png" width=16 style="display: inline-block; vertical-align: inherit"></h5></a></li>
+</ul>
+<ul class = "nav navbar-nav ml-auto" style="display:table-row;">
+<li class = "nav-item" style="display: table-cell; vertical-align: text-bottom;"><a class="nav-link" href="#"><h1>&nbsp;</h1></b></a></li>
+<li class = "nav-item" style="display: table-cell; vertical-align: text-bottom;"><a class="nav-link" href="cite.html"><h5>Cite</h5></b></a></li>
+</ul>
+
 </nav>
 
 <br><br><br>
@@ -17,10 +25,10 @@
 <div class="container">
 <div class="jumbotron">
 <h4>
-EVEE-tools is a suite of scripts used in <a href="https://www.biorxiv.org/content/early/2017/12/04/229096" target="_blank">Chen et al., 2017</a> to analyze expression evolution across species. 
+EVEE-Tools is a suite of scripts used in <a href="https://www.biorxiv.org/content/early/2017/12/04/229096" target="_blank">Chen et al., 2017</a> to analyze expression evolution across species. 
 <h4>
 <h5>
-<br>To begin, download all scripts and example data from the <a href="https://github.com/evee-tools/evee-tools" target="_blank">github repository</a>.
+<br>To begin, download all scripts and example data from the <a href="https://github.com/evee-tools/evee-tools" target="_blank">github</a> repository.
 <br><br>
 These scripts may be helpful for the following tasks:
 </h5>
@@ -95,7 +103,7 @@ These scripts may be helpful for the following tasks:
 	<code>
 	<b>./fitOUModel.R</b>
 	<br>usage: Rscript ./fitOUModel.R exp_matrix index tree out</code>
-	<br><br>This scripts fits a Brownian motion and Ornstein-Uhlenbeck (OU) model to each gene.
+	<br><br>This script is a wrapper script for <em>ouch</em> to fit Brownian motion and Ornstein-Uhlenbeck (OU) models to each gene. See <a href="https://cran.r-project.org/web/packages/ouch/ouch.pdf" target="_blank"><em>ouch</em></a>'s reference manual</a> for additional functionalities.
 	<br><br>
 	<ul></ul>
 	<b>Dependencies:</b>
@@ -108,7 +116,7 @@ These scripts may be helpful for the following tasks:
 	<b>Input:</b>
 	<ul>
 		<li>Expression matrix and index file from <code>./makeExpressionMatrix.py</code> (see <b>Generating an expression matrix...</b>).</li>
-		<li>Tree file for ouch. (See <a href="https://cran.r-project.org/web/packages/ouch/ouch.pdf" target="_blank"><em>ouch</em></a>'s reference manual</a>.)
+		<li>Tree file for <em>ouch</em>. (See <a href="https://cran.r-project.org/web/packages/ouch/ouch.pdf" target="_blank"><em>ouch</em></a>'s reference manual</a>.)
 	</ul>
 	<br>
 	<b>Output:</b>
@@ -119,15 +127,76 @@ These scripts may be helpful for the following tasks:
 	<br><code>Rscript ./fitOUModel.R data/liver.exp_matrix.txt data/liver.index.txt data/mammals.tree.txt liver.ou_stats.txt</code>
 	</p>
 </div>
+
+<button class="accordion"><font size = "4">Score gene expression levels for outlier expression</font></button>
+<div class="panel">
+	<br>
+	<p>
+	<code>
+	<b>./scoreGenes.R</b>
+	<br>usage: Rscript ./scoreGenes.R ou_stats ref_exp test_exp outPrefix
+	</code>
+	<br><br>This script calculates a z-score and FDR-corrected q-value for gene expression levels from a test sample, as compared to each gene's evolutionary mean and variance fitted from the OU model.
+	<br><br>
+	<ul></ul>
+	<b>Dependencies:</b>
+	<ul>
+	<li>R (code was developed in v3.2.1)</li>
+	<li><a href="http://bioconductor.org/packages/release/bioc/html/edgeR.html" target="_blank"><em>edgeR</em></a></li>
+	</ul>
+	<br>
+	<b>Input:</b>
+	<ul>
+		<li>Evolutionary statistics from <code>./fitOUModel.R</code> (see <b>Finding the evolutionary mean and variance...)</b></li>
+		<li>Reference sample used to normalize data in <code>./fitOUModel.R</code> for normalizing the test data. By default, this is the mean expression across all samples belonging to the first species listed in the index file. Reference data for the provided ou_stats.txt files are provided in data/ref_exp.</li>
+		<li>Test sample, for which you want to score expression levels.  TPM expression values are expected (though FPKM will work okay, also). The first column should be official human gene names.</li>
+	</ul>
+	<b>Output:</b>
+	<ul>
+		<li>Z-scores of each gene from test sample, when scored against evolutionary statistics. Z-scores are only calculated for genes whose expression evolution fits an OU model (i.e. rejects Brownion motion as a null model) and whose evolutionary mean is above 5 TPM.</li>
+		<li>Q-values (corrected by Benjamini-Hochberg) of each gene from test sample.</li>
+	</ul>
+	<br><b>Example:</b>
+	<br><code>Rscript ./scoreGenes.R data/liver.ou_stats.txt data/ref_exp/liver.ref_exp.txt data/patient.test.txt patient</code>
+	</p>
+</div>
 <button class="accordion"><font size = "4">Identifying 'differential expression' across a tree</font></button>
 <div class="panel">
 	<br>
-	<p>Lorem ipsum...</p>
+	<p>
+	<code>
+	<b>./ouRegimes.R</b>
+	<br>usage: Rscript ./ouRegimes exp_matrix index tree regimes outPrefix
+	</code>
+	<br><br>This script is a wrapper script for <em>ouch</em> to fit multivariate OU distributions to expression data to identifying differential gene expression across a tree. See <a href="https://cran.r-project.org/web/packages/ouch/ouch.pdf" target="_blank"><em>ouch</em></a>'s reference manual</a> for additional functionalities.
+	<br><br>
+	<ul></ul>
+	<b>Dependencies:</b>
+	<ul>
+	<li>R (code was developed in v3.2.1)</li>
+	<li><a href="http://bioconductor.org/packages/release/bioc/html/edgeR.html" target="_blank"><em>edgeR</em></a></li>
+	<li><a href="https://cran.r-project.org/web/packages/ouch/index.html" target="_blank"><em>ouch</em></a></li>
+	</ul>
+	<br>
+	<b>Input:</b>
+	<ul>
+		<li>Expression matrix and index file from <code>./makeExpressionMatrix.py</code> (see <b>Generating an expression matrix...</b>).</li>
+		<li>Tree file for <em>ouch</em>. (See <a href="https://cran.r-project.org/web/packages/ouch/ouch.pdf" target="_blank"><em>ouch</em></a>'s reference manual</a>.)
+		<li>File indicating which branch belongs to which 'regime' under the OU model. Each row should correspond to the same row from the tree file. For the univariate OU model (i.e. no differential expression), a single number should be listed in each row; for a multivariate model, use a distinct number to represent each regime. Multiple models can be defined in additional columns.</li>
+	</ul>
+	<br>
+	<b>Output:</b>
+	<ul>
+		<li>P-values for the fit of each OU model against a Brownion motion model.</li>
+		<li>AIC and BIC scores for each OU model.</li>
+		<li>Estimated mean expression levels for each regime in each model.</li>
+	</ul>
+	</p>
 </div>
 
-
-
 <script src = "scripts.js"></script>
+
+<br>Any questions or issues may be directed to the <a href="https://github.com/evee-tools/evee-tools/issues" target="_blank">github</a> issues page.
 </div>
 </div>
 </body>
